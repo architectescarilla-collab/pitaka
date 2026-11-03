@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { useStore } from './store';
-import { seedData } from './seed';
+import { seedData, starterCommon } from './seed';
+import { supabase } from './supabase';
 import { NumberInput, Field } from './ui';
 import { phpValue } from './money';
 import type { Data } from './types';
@@ -15,7 +16,9 @@ function download(name: string, text: string, type: string) {
 }
 
 export function Settings() {
-  const { data, update, replace, saved } = useStore();
+  const { data, update, replace, saved, email } = useStore();
+  const [pw, setPw] = useState('');
+  const [pwMsg, setPwMsg] = useState('');
   const [newCat, setNewCat] = useState('');
   const [msg, setMsg] = useState('');
   const [confirmReset, setConfirmReset] = useState(false);
@@ -50,6 +53,24 @@ export function Settings() {
     <div className="page">
       <div className="page-head"><h1>Settings</h1></div>
 
+      {email && (
+        <section className="card">
+          <h2>Your account</h2>
+          <p className="small">Signed in as <strong>{email}</strong>. Your data saves to your account and syncs to any device you sign in on.</p>
+          <div className="inline-add">
+            <input id="set-newpw" type="password" autoComplete="new-password" placeholder="New password (8+ characters)" value={pw} onChange={(e) => setPw(e.target.value)} />
+            <button type="button" className="btn ghost" onClick={async () => {
+              if (pw.length < 8) return setPwMsg('Passwords are at least 8 characters.');
+              const { error } = await supabase!.auth.updateUser({ password: pw });
+              setPwMsg(error ? error.message : 'Password changed.');
+              if (!error) setPw('');
+            }}>Change password</button>
+          </div>
+          {pwMsg && <p className="small" role="status">{pwMsg}</p>}
+          <div><button type="button" className="btn ghost" onClick={() => supabase!.auth.signOut()}>Sign out</button></div>
+        </section>
+      )}
+
       <section className="card">
         <h2>Exchange rate</h2>
         <div className="form-grid">
@@ -78,8 +99,7 @@ export function Settings() {
       <section className="card">
         <h2>Your data</h2>
         <p className="muted small">
-          Pitaka keeps everything in this browser on this device. Nothing is sent to a server. {saved ? '' : 'Saving is blocked in this browser right now (private mode?), so download a backup before closing.'}
-          Download a backup now and then, and restore it to move to another phone or browser.
+          {email ? 'Your data is saved to your account. A backup file is still handy to keep a copy of your own.' : <>Pitaka keeps everything in this browser on this device. Nothing is sent to a server. {saved ? '' : 'Saving is blocked in this browser right now (private mode?), so download a backup before closing.'} Download a backup now and then, and restore it to move to another phone or browser.</>}
         </p>
         <div className="row-actions wrap">
           <button type="button" className="btn primary" onClick={() => download(`pitaka-backup-${stamp}.json`, JSON.stringify(data, null, 2), 'application/json')}>Download backup</button>
@@ -92,9 +112,9 @@ export function Settings() {
 
       <section className="card">
         <h2>Start over</h2>
-        <p className="muted small">Deletes every entry and puts your accounts, bills and loans back to the starting list with ₱0 balances.</p>
+        <p className="muted small">Deletes every entry and puts your accounts back to the starting list with ₱0 balances.</p>
         {confirmReset
-          ? <div className="row-actions"><button type="button" className="btn danger" onClick={() => { replace(seedData()); setConfirmReset(false); setMsg('Everything was reset.'); }}>Yes, delete everything</button><button type="button" className="btn ghost" onClick={() => setConfirmReset(false)}>Keep my data</button></div>
+          ? <div className="row-actions"><button type="button" className="btn danger" onClick={() => { replace(email ? starterCommon() : seedData()); setConfirmReset(false); setMsg('Everything was reset.'); }}>Yes, delete everything</button><button type="button" className="btn ghost" onClick={() => setConfirmReset(false)}>Keep my data</button></div>
           : <button type="button" className="btn ghost danger" onClick={() => setConfirmReset(true)}>Reset Pitaka</button>}
       </section>
     </div>

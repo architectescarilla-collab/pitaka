@@ -12,9 +12,20 @@ A personal finance tracker built around how you actually log money: type `290 rc
 - **Recurring bills** with an end month, and **loans owed to you** with changing monthly amounts, ahead/behind status and payoff month.
 - **Backup and restore** as JSON, and CSV export.
 
-## Where your data lives
+## Accounts and where your data lives
 
-Everything is stored in your browser (localStorage) on the device you use. Nothing is sent to a server. Use Settings → Download backup to keep a copy or move to another device.
+With Supabase configured, people sign up with email and password, and each person's data is stored in their own row of the `pitaka_data` table, protected by row-level security so nobody else can read it. It syncs to every device you sign in on and is cached on the device for quick start-up.
+
+Without Supabase settings, Pitaka runs on one device only and keeps data in the browser.
+
+### Setting up Supabase
+
+1. Create a project at supabase.com.
+2. In SQL Editor, run `supabase/schema.sql`.
+3. In Authentication → URL Configuration, set the Site URL to your deployed address and add it to Redirect URLs.
+4. Set these environment variables (in Vercel and in a local `.env`):
+   - `VITE_SUPABASE_URL`: Project Settings → API → Project URL
+   - `VITE_SUPABASE_ANON_KEY`: Project Settings → API → anon public key
 
 ## Develop
 

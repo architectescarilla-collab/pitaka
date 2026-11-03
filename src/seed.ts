@@ -119,3 +119,21 @@ export function seedData(): Data {
     settings: { usdRate: 63.41, monthlySavingsTarget: 20000 },
   };
 }
+
+/** For new cloud users: common Philippine accounts at ₱0, no personal bills or loans. */
+export function starterCommon(): Data {
+  return {
+    version: 1,
+    accounts: structuredClone(seedAccounts.filter((a) => a.id !== 'pagibig-mp2-nanay')),
+    txns: [],
+    recurring: [],
+    receivables: [],
+    categories: [...seedCategories],
+    settings: { usdRate: 58, monthlySavingsTarget: 0 },
+  };
+}
+
+/** For new cloud users who want to add every account themselves. */
+export function starterBlank(): Data {
+  return { ...starterCommon(), accounts: structuredClone(seedAccounts.filter((a) => a.id === 'cash')) };
+}

@@ -201,3 +201,22 @@ input:focus, select:focus { border-color: var(--accent); outline: none; box-shad
   .sheet { animation: rise 180ms ease-out; }
   @keyframes rise { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
 }
+
+/* Sign-in and sync */
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.sync { font-size: 0.75rem; padding: 2px 10px; border-radius: 999px; background: rgb(255 255 255 / 12%); color: #f3efe2; }
+.sync.error, .sync.offline { background: #e9c46a; color: #14322b; }
+.auth { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; background: var(--brand); }
+.auth-card { width: min(420px, 100%); background: var(--panel); border-radius: 18px; padding: 24px 20px; display: grid; gap: 12px; box-shadow: 0 20px 60px rgb(0 0 0 / 30%); }
+.auth-brand { color: var(--ink); }
+.auth-form { display: grid; gap: 12px; }
+.auth-links { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.link { background: none; border: 0; padding: 4px 0; color: var(--accent); font-weight: 600; cursor: pointer; justify-self: start; }
+.btn.block { width: 100%; padding: 11px 16px; }
+.btn:disabled { opacity: 0.6; cursor: default; }
+.form-info { margin: 0; font-size: 0.88rem; color: var(--ok); }
+.choices { display: grid; gap: 8px; }
+.choice { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--line); border-radius: 12px; padding: 12px; cursor: pointer; }
+.choice.on { border-color: var(--accent); background: var(--accent-soft); }
+.choice input { width: auto; margin-top: 3px; }
+.choice span { display: grid; gap: 2px; }

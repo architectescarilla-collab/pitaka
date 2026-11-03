@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { StoreProvider, useStore } from './store';
+import { useStore } from './store';
+import { AuthGate } from './Auth';
 import { Home } from './Home';
 import { Activity } from './Activity';
 import { Accounts, BalancesSheet } from './Accounts';
@@ -41,6 +42,7 @@ function Shell() {
     <div className="app">
       <header className="topbar">
         <span className="brand"><span className="brand-mark" aria-hidden="true">₱</span>Pitaka</span>
+        <SyncBadge />
       </header>
       <main>
         {tab === 'home' && <Home onEdit={edit} onAddFirstBalance={() => setBalances(true)} />}
@@ -68,6 +70,13 @@ function Shell() {
   );
 }
 
+function SyncBadge() {
+  const { sync } = useStore();
+  if (sync === 'local') return null;
+  const label = { saving: 'Saving…', saved: 'Saved', offline: 'Offline, will retry', error: 'Not saved', local: '' }[sync];
+  return <span className={'sync ' + sync} role="status">{label}</span>;
+}
+
 function AdjustmentSheet({ t, onClose }: { t: Adjustment; onClose: () => void }) {
   const { data, update } = useStore();
   const a = data.accounts.find((x) => x.id === t.accountId);
@@ -81,8 +90,8 @@ function AdjustmentSheet({ t, onClose }: { t: Adjustment; onClose: () => void })
 
 export default function App() {
   return (
-    <StoreProvider>
+    <AuthGate>
       <Shell />
-    </StoreProvider>
+    </AuthGate>
   );
 }
